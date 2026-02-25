@@ -1,0 +1,7 @@
+# Fichiers de données et labels secrets
+#Data files and secret labels
+*.npy
+*.npz
+__pycache__/
+*.pyc
+.DS_Store
