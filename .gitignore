@@ -2,6 +2,8 @@
 #Data files and secret labels
 *.npy
 *.npz
+data/
+baseline_model.pth
 __pycache__/
 *.pyc
 .DS_Store
