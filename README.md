@@ -1,5 +1,7 @@
 # Competition Baseline (CIFAR-10)
-![Uploading image.png…]()
+https://www.kaggle.com/competitions/deep-learning-spring-2025-project-1/data
+
+<img width="1092" height="723" alt="image" src="https://github.com/user-attachments/assets/f3631131-7db6-48ce-a37e-0b1cd279ffbb" />
 
 
 This repository provides a simple CNN baseline, a submission format, and an evaluation workflow for a CIFAR-10-style image classification competition.
