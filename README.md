@@ -1,4 +1,6 @@
 # Competition Baseline (CIFAR-10)
+![Uploading image.png…]()
+
 
 This repository provides a simple CNN baseline, a submission format, and an evaluation workflow for a CIFAR-10-style image classification competition.
 
