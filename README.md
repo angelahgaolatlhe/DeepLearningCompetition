@@ -1,4 +1,5 @@
 # Competition Baseline (CIFAR-10)
+[![CI test_no_labels](https://github.com/Diamweli/DeepLearningCompetition/actions/workflows/ci-test-no-labels.yml/badge.svg)](https://github.com/Diamweli/DeepLearningCompetition/actions/workflows/ci-test-no-labels.yml)
 https://www.kaggle.com/competitions/deep-learning-spring-2025-project-1/data
 
 <img width="1092" height="723" alt="image" src="https://github.com/user-attachments/assets/f3631131-7db6-48ce-a37e-0b1cd279ffbb" />
@@ -247,6 +248,14 @@ La phase de prédiction filtre uniquement les fichiers images et masque tout fic
 ```bash
 python baseline/test_no_labels.py
 ```
+
+### CI: Test et couverture
+
+Le workflow CI exécute `baseline/test_no_labels.py` à chaque push et pull request sur `main` et `master`, génère `coverage.xml`, publie l’artefact, et nettoie les fichiers temporaires `._*` avant et après les tests.
+
+Artefacts visibles dans GitHub Actions:
+
+- coverage.xml
 
 ## Protocole Expert de Soumission d’une Clé Publique
 

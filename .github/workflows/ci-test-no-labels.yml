@@ -1,0 +1,75 @@
+name: CI test_no_labels
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - main
+      - master
+
+jobs:
+  test-no-labels:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v4
+
+      - name: Configurer Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+
+      - name: Nettoyer les fichiers temporaires
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import os
+          root = Path(".")
+          for path in root.rglob("*"):
+              if not path.is_file():
+                  continue
+              name = path.name
+              if name.startswith("._") or name.startswith("._."):
+                  path.unlink()
+          PY
+
+      - name: Installer les dépendances
+        run: |
+          pip install -r baseline/requirements.txt
+          pip install coverage
+
+      - name: Exécuter le test avec couverture
+        run: |
+          python -m coverage run baseline/test_no_labels.py
+          python -m coverage xml -o coverage.xml
+          python -m coverage report --show-missing
+
+      - name: Nettoyer les fichiers temporaires après tests
+        if: always()
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          root = Path(".")
+          for path in root.rglob("*"):
+              if not path.is_file():
+                  continue
+              name = path.name
+              if name.startswith("._") or name.startswith("._."):
+                  path.unlink()
+          PY
+
+      - name: Publier les artefacts de test
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-no-labels-artifacts
+          path: |
+            coverage.xml
+
+      - name: Résumé en cas d’échec
+        if: failure()
+        run: |
+          echo "Le test baseline/test_no_labels.py a échoué." >> "$GITHUB_STEP_SUMMARY"
