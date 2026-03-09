@@ -3,22 +3,28 @@ name: Évaluation de soumission
 on:
   pull_request:
     paths:
-      - 'submissions/**'
+      - 'submissions/*.enc'
+      - 'submissions/**/*.enc'
 
 jobs:
   evaluate:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: read
     steps:
       - name: Checkout du code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Configurer Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.9'
 
-      - name: Installer les dépendances (numpy uniquement pour l'évaluation)
-        run: pip install numpy
+      - name: Installer les dépendances
+        run: pip install cryptography numpy pandas scikit-learn
 
       - name: Décoder les labels de test depuis les secrets
         env:
@@ -29,25 +35,38 @@ jobs:
       - name: Récupérer le nom du fichier de soumission
         id: submission
         run: |
-          # On récupère le premier fichier ajouté dans submissions/
-          FILE=$(git diff --name-only --diff-filter=A origin/${{ github.base_ref }}...HEAD | grep '^submissions/' | head -n1)
+          git fetch origin ${{ github.base_ref }}
+          FILE=$(git diff --name-only --diff-filter=A origin/${{ github.base_ref }}...HEAD | grep '^submissions/.*\.enc$' | head -n1)
           echo "file=$FILE" >> $GITHUB_OUTPUT
 
-      - name: Exécuter l'évaluation
+      - name: Déchiffrer la soumission
         if: steps.submission.outputs.file != ''
-        run: python evaluation/score.py ${{ steps.submission.outputs.file }}
+        continue-on-error: true
+        env:
+          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+        run: python encryption/decrypt.py --input "${{ steps.submission.outputs.file }}" --output /tmp/predictions.txt
+
+      - name: Exécuter le scoring
+        if: steps.submission.outputs.file != ''
+        continue-on-error: true
+        run: python evaluation/score.py --predictions /tmp/predictions.txt --submission "${{ steps.submission.outputs.file }}" --output /tmp/results.json
 
       - name: Mettre à jour le leaderboard
         if: steps.submission.outputs.file != ''
-        env:
-          GITHUB_ACTOR: ${{ github.actor }}
-        run: python leaderboard/update.py score.json
+        run: |
+          if [ -f /tmp/results.json ]; then
+            git fetch origin main
+            git checkout main
+            python leaderboard/update_leaderboard.py /tmp/results.json
+          fi
 
       - name: Committer le leaderboard mis à jour
         if: steps.submission.outputs.file != ''
         run: |
-          git config --global user.name 'github-actions'
-          git config --global user.email 'actions@github.com'
-          git add leaderboard/README.md
-          git diff --quiet && git diff --staged --quiet || git commit -m "Mise à jour du leaderboard"
-          git push
+          if [ -f leaderboard/leaderboard.csv ]; then
+            git config --global user.name 'github-actions'
+            git config --global user.email 'actions@github.com'
+            git add leaderboard/leaderboard.csv
+            git diff --cached --quiet || git commit -m "Mise à jour du leaderboard"
+            git push origin main
+          fi

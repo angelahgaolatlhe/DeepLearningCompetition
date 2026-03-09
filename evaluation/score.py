@@ -1,44 +1,52 @@
-# evaluation/score.py
-import torch
-import numpy as np
+import argparse
 import json
 import os
 import sys
 
+import numpy as np
+
+
+def load_predictions(path: str) -> np.ndarray:
+    if path.endswith(".npy"):
+        return np.load(path)
+    return np.loadtxt(path, dtype=int)
+
+
+def extract_team_name(submission_path: str) -> str:
+    if not submission_path:
+        return os.environ.get("TEAM_NAME", "inconnu")
+    base = os.path.basename(submission_path)
+    if base.endswith(".enc"):
+        return base[:-4]
+    return os.path.splitext(base)[0]
+
+
 def main():
-    # Le chemin du fichier de soumission est passé en argument
-    # The path to the submission file is passed as an argument
-    if len(sys.argv) < 2:
-        print("Erreur : fichier de soumission manquant")
-        sys.exit(1)
-    submission_path = sys.argv[1]
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--predictions", required=True)
+    parser.add_argument("--submission", default="")
+    parser.add_argument("--output", default="results.json")
+    args = parser.parse_args()
 
-    # Charger les prédictions du participant (format : un entier par ligne, ou un fichier .npy)
-    # Ici on suppose un fichier texte avec une classe par ligne (dans l'ordre des images de test)
-    # Load participant predictions (assuming a text file with one class per line)
-    preds = np.loadtxt(submission_path, dtype=int)
-
-    # Charger les vrais labels (récupérés depuis l'environnement ou un fichier temporaire)
-    # On utilise une variable d'environnement pour le chemin
-    # Use an environment variable for the path to the test labels file
-    test_labels_path = os.environ.get('TEST_LABELS_PATH', 'evaluation/test_labels.npy')
+    test_labels_path = os.environ.get("TEST_LABELS_PATH", "evaluation/test_labels.npy")
     if not os.path.exists(test_labels_path):
         print("Erreur : fichier de labels de test introuvable")
         sys.exit(1)
+
+    preds = load_predictions(args.predictions)
     y_true = np.load(test_labels_path)
 
     if len(preds) != len(y_true):
         print("Erreur : le nombre de prédictions ne correspond pas")
         sys.exit(1)
 
-    # Calculate accuracy
-    accuracy = np.mean(preds == y_true)
+    accuracy = float(np.mean(preds == y_true))
+    team = extract_team_name(args.submission)
 
-    # Sauvegarder le score dans un fichier JSON pour l'étape suivante 
-    # Save the score to a JSON file for the next step
-    with open('score.json', 'w') as f:
-        json.dump({'accuracy': accuracy}, f)
+    with open(args.output, "w") as f:
+        json.dump({"accuracy": accuracy, "team": team}, f)
     print(f"Accuracy: {accuracy:.4f}")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()
