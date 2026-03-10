@@ -2,7 +2,9 @@
 #imports
 import os
 import warnings
-os.environ.setdefault("HF_HOME", "/tmp/hf-home")
+base_tmp = os.path.join(os.getcwd(), ".tmp")
+os.makedirs(base_tmp, exist_ok=True)
+os.environ.setdefault("HF_HOME", os.path.join(base_tmp, "hf-home"))
 os.environ.pop("TRANSFORMERS_CACHE", None)
 warnings.filterwarnings("ignore", message="Using `TRANSFORMERS_CACHE` is deprecated.*", category=FutureWarning)
 warnings.filterwarnings("ignore", category=FutureWarning, module="transformers.utils.hub")
@@ -21,7 +23,7 @@ def main():
     trainset = torchvision.datasets.CIFAR10(root='./data', train=True,
                                             download=True, transform=transform)
     trainloader = torch.utils.data.DataLoader(trainset, batch_size=64,
-                                              shuffle=True, num_workers=2)
+                                              shuffle=True, num_workers=0)
     model = SimpleCNN()
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=0.001)

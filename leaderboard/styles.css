@@ -1,0 +1,177 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  background: radial-gradient(circle at top, #1c1c2b, #0f0f16 55%);
+  color: #f3f4f8;
+}
+
+.page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 20px 48px;
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.title h1 {
+  margin: 0 0 6px;
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.title p {
+  margin: 0;
+  color: #b7bdd3;
+}
+
+.meta {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  font-size: 14px;
+  color: #d4d7e8;
+}
+
+.controls {
+  display: grid;
+  grid-template-columns: minmax(200px, 1fr) auto auto;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.search input,
+.filters select,
+.refresh button {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid #2b2f44;
+  background: #171826;
+  color: #f3f4f8;
+  font-size: 14px;
+}
+
+.refresh button {
+  cursor: pointer;
+  background: linear-gradient(135deg, #5b7fff, #7c3aed);
+  border: none;
+  font-weight: 600;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.refresh button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(92, 120, 255, 0.35);
+}
+
+.table-wrapper {
+  background: #111221;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid #22263a;
+  box-shadow: 0 10px 30px rgba(5, 7, 20, 0.4);
+}
+
+.leaderboard {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 720px;
+}
+
+.leaderboard thead th {
+  text-align: left;
+  padding: 16px;
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: #8f96b3;
+  background: #141627;
+  cursor: pointer;
+}
+
+.leaderboard tbody tr {
+  transition: transform 0.3s ease, background 0.2s ease;
+}
+
+.leaderboard tbody tr:hover {
+  background: rgba(88, 111, 255, 0.08);
+}
+
+.leaderboard td {
+  padding: 16px;
+  border-top: 1px solid #21253a;
+  font-size: 14px;
+}
+
+.rank {
+  font-weight: 700;
+  color: #ffd369;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.badge.gold {
+  background: linear-gradient(135deg, #f9d976, #f39f86);
+  color: #3a2e1a;
+}
+
+.badge.silver {
+  background: linear-gradient(135deg, #dbe6f6, #c5796d);
+  color: #2b2d3c;
+}
+
+.badge.bronze {
+  background: linear-gradient(135deg, #f6d365, #fda085);
+  color: #3a2a1d;
+}
+
+.score {
+  font-weight: 600;
+}
+
+.progress {
+  height: 8px;
+  background: #1b1e33;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progress span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, #5b7fff, #22d3ee);
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+
+@media (max-width: 900px) {
+  .controls {
+    grid-template-columns: 1fr;
+  }
+
+  .table-wrapper {
+    overflow-x: auto;
+  }
+}

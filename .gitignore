@@ -12,3 +12,9 @@ competition_public_key.pem
 test_predictions.txt
 test_team.enc
 test_predictions.dec
+.tmp/
+baseline/train_transfer.py
+baseline/predict_transfer.py
+# macOS
+.DS_Store
+._*

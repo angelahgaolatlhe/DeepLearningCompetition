@@ -6,6 +6,8 @@ https://www.kaggle.com/competitions/deep-learning-spring-2025-project-1/data
 
 <img width="1392" height="497" alt="image" src="https://github.com/user-attachments/assets/541f0bfc-95a5-41bf-a1ed-50e11d38729f" />
 
+![alt text](image.png)
+
 This repository provides a simple CNN baseline, a submission format, and an evaluation workflow for a CIFAR-10-style image classification competition.
 
 ## Repository Structure
@@ -331,3 +333,16 @@ python evaluation/score.py path/to/predictions.txt
 
 This writes `score.json` with the accuracy.
 # DeepLearningCompetition
+
+Complete training:
+TMPDIR=.tmp TORCH_HOME=.tmp/torch-home EPOCHS=10 MAX_BATCHES=0 MAX_EVAL_BATCHES=0 python3 baseline/train_transfer.py
+
+Predictions:
+TMPDIR=.tmp TORCH_HOME=.tmp/torch-home python3 baseline/predict_transfer.py
+
+Scoriing and Leaderboard:
+TEAM_NAME="$(git config user.name | tr ' ' '_')" TEST_LABELS_PATH=.tmp/transfer_test_labels.npy python3 evaluation/score.py --predictions .tmp/transfer_predictions.txt --submission "" --output .tmp/transfer_results.json
+python3 leaderboard/update_leaderboard.py .tmp/transfer_results.json
+
+Change your name:
+git config user.name "VotreNomGitHub"
